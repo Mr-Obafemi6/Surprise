@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Une surprise pour toi 💌</title>
+<style>
+:root{--bg1:#ffe3ec;--bg2:#ffc2d4;--card:#fff;--ink:#4a1d2e;--accent:#e63e6d;--soft:#ff8fab;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#2a0f1b;--bg2:#4a1730;--card:#3a1626;--ink:#ffe3ec;--accent:#ff6b94;--soft:#ff8fab}}
+:root[data-theme="dark"]{--bg1:#2a0f1b;--bg2:#4a1730;--card:#3a1626;--ink:#ffe3ec;--accent:#ff6b94;--soft:#ff8fab}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*{box-sizing:border-box}
+body{margin:0;height:100%;background:linear-gradient(160deg,var(--bg1),var(--bg2));color:var(--ink);
+font-family:Georgia,"Times New Roman",serif;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center}
+#hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.h{position:absolute;bottom:-40px;animation:up linear forwards;opacity:.8}
+@keyframes up{to{transform:translateY(-115vh) rotate(25deg);opacity:0}}
+.screen{display:none;max-width:420px;width:100%;padding:24px;animation:in .8s ease both;position:relative;z-index:2}
+.screen.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+h1{font-size:1.9rem;margin:.4em 0;line-height:1.25}
+p{font-size:1.2rem;line-height:1.6;margin:.6em 0}
+.env{font-size:6rem;cursor:pointer;display:inline-block;animation:beat 1.4s infinite}
+@keyframes beat{50%{transform:scale(1.12)}}
+button{font:inherit;font-size:1.1rem;border:0;border-radius:999px;padding:.8em 1.6em;margin:.4em;cursor:pointer;
+background:var(--accent);color:#fff;box-shadow:0 6px 18px rgba(230,62,109,.35)}
+button.alt{background:var(--card);color:var(--ink);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.card{background:var(--card);border-radius:20px;padding:28px 22px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+small{opacity:.7}
+.env.open{animation:pop .6s ease forwards}
+@keyframes pop{to{transform:scale(1.7) rotate(10deg);opacity:0}}
+.reasons{display:grid;gap:10px;margin:14px 0}
+.rc{background:var(--card);border-radius:16px;padding:16px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.12);transition:transform .5s;min-height:56px}
+.rc.flip{transform:rotateX(360deg);color:var(--accent);font-weight:bold}
+.sp{position:fixed;pointer-events:none;z-index:9;font-size:14px;animation:sp .8s forwards}
+@keyframes sp{to{transform:translateY(-30px) scale(.2);opacity:0}}
+.burst{position:fixed;left:50%;top:50%;font-size:26px;pointer-events:none;z-index:9;animation:bu 1.4s ease-out forwards}
+@keyframes bu{to{transform:translate(var(--x),var(--y)) rotate(360deg);opacity:0}}
+h1{background:linear-gradient(90deg,var(--accent),var(--soft),var(--accent));background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 4s linear infinite}
+@keyframes sh{to{background-position:200%}}
+#ytp{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);transform:translateX(-50%);width:230px;height:130px;border:0;border-radius:14px;z-index:15;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+#ly{display:none;position:fixed;inset:0;z-index:30;overflow-y:auto;background:var(--bg1);padding:calc(env(safe-area-inset-top,0px) + 56px) 24px calc(env(safe-area-inset-bottom,0px) + 150px);text-align:center}
+#ly.on{display:block;animation:in .5s ease both}
+#ly p{font-size:1.1rem;line-height:1.7;margin:0 0 1.6em}
+#ly p.r{color:var(--accent);font-weight:bold}
+#lyx{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:10px;margin:0;padding:.5em .8em}
+</style>
+</head>
+<body>
+<div id="hearts"></div>
+<button class="alt" id="lyr" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;z-index:20;padding:.5em .8em;margin:0">📜 Paroles</button>
+<button class="alt" id="mus" style="position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:10px;z-index:20;padding:.5em .8em;margin:0">🎵</button>
+
+<section class="screen on" id="s0">
+  <div class="env" id="env">💌</div>
+  <h1 id="hello">Une surprise t'attend…</h1>
+  <p><small>Touche l'enveloppe pour l'ouvrir</small></p>
+</section>
+
+<section class="screen" id="s1">
+  <div class="card"><p id="msg"></p></div>
+  <button id="next">Suite 💕</button>
+</section>
+
+<section class="screen" id="sr">
+  <h1>3 raisons… 💭</h1>
+  <p><small>Touche chaque carte</small></p>
+  <div class="reasons" id="rs"></div>
+  <button id="go" style="display:none">Continuer 💕</button>
+</section>
+
+<section class="screen" id="s2">
+  <div class="card">
+    <h1 id="q"></h1>
+    <p>Réponds avec ton cœur 💗</p>
+  </div>
+  <div style="position:relative;min-height:90px">
+    <button id="yes">Oui 💖</button>
+    <button class="alt" id="no">Non</button>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <div style="font-size:5rem">🥰</div>
+  <h1>Tu as dit oui !</h1>
+  <p id="end"></p>
+</section>
+
+<div id="ly"><button class="alt" id="lyx">✕ Fermer</button><h1>Ailleurs</h1><p class="v">J'ai trop gardé mes pensées dans le silence<br>J'ai trop souri pour cacher mes absences<br>Je dis que ça va même quand ça va pas<br>Je préfère me taire plutôt que de parler de moi<br>J'avance doucement avec mes souvenirs<br>Y a des choses du passé que j'arrive pas à fuir</p><p class="v">Elle voit mes efforts mais pas mes doutes<br>Tout ce que je cache quand je prends une autre route<br>J'ai toujours voulu faire comme si j'étais fort<br>Comme si les blessures ne me touchaient plus<br>Mais dans ma tête, ça tourne toute la nuit<br>Je fais comme si de rien, mais je pense encore à elle<br>Je ne sais pas pourquoi j'ai peur de m'attacher<br>Pourquoi j'ai toujours envie de m'enfuir<br>J'ai son image qui revient dans ma tête<br>Même quand je fais croire que tout s'arrête</p><p class="r">Je suis peut-être perdu, mais je pense encore à elle<br>Même si je fais semblant d'être loin d'elle<br>J'ai des mots que j'arrive pas à dire<br>Des sentiments que j'arrive pas à retenir<br>J'avance seul dans mes habitudes<br>Avec mes erreurs et mes incertitudes<br>Je dis que j'ai changé, que j'ai tourné la page<br>Mais son souvenir reste dans le paysage</p><p class="v">J'ai vu les jours passer sans vraiment comprendre<br>Tout ce que j'avais peur de perdre<br>Elle voulait juste savoir ce que je ressens<br>Moi j'ai gardé le silence encore longtemps<br>J'ai fermé des portes pour me protéger<br>J'ai oublié comment laisser quelqu'un rester<br>J'ai fait semblant de ne pas être touché<br>Alors qu'au fond, j'étais déjà attaché<br>J'écoute encore les choses qu'elle disait<br>Les petits détails que j'oubliais jamais<br>Même si le temps éloigne les personnes<br>Y a certaines voix qui restent et résonnent<br>J'ai pas toujours fait les bons choix<br>J'ai souvent douté de moi<br>Mais quand la nuit revient doucement<br>Je repense encore à tout ce qu'on était avant</p><p class="r">Je suis peut-être perdu, mais je pense encore à elle<br>Même si je fais semblant d'être loin d'elle<br>J'ai des mots que j'arrive pas à dire<br>Des sentiments que j'arrive pas à retenir<br>J'avance seul dans mes habitudes<br>Avec mes erreurs et mes incertitudes<br>Je dis que j'ai changé, que j'ai tourné la page<br>Mais son souvenir reste dans le paysage</p><p class="v">Peut-être qu'un jour, j'arrêterai de fuir<br>Peut-être qu'un jour, j'apprendrai à sourire<br>Mais pour l'instant j'avance doucement<br>Avec mes blessures et mes sentiments</p></div>
+<script>
+// ✏️ À PERSONNALISER : ajoute ?pour=Prénom&de=Toi à la fin du lien
+var qs = new URLSearchParams(location.search);
+var pour = qs.get('pour') || 'toi';
+var de = qs.get('de') || 'quelqu\'un qui pense à toi';
+
+var messages = [
+  "Bonjour " + pour + " 🌸",
+  "J'ai voulu te faire une petite surprise, parce que tu le mérites vraiment.",
+  "Ton sourire a le don d'illuminer mes journées.",
+  "Je suis heureux de te connaître, et j'ai une question à te poser…"
+];
+var question = "Veux-tu passer un moment avec moi, rien que nous deux ?";
+var finale = "Je suis tellement content ! J'ai hâte de te voir.<br>— " + de + " 💌";
+
+var $ = function(id){return document.getElementById(id)};
+function show(n){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on')});$('s'+n).classList.add('on')}
+function heart(){
+  var h=document.createElement('div');h.className='h';
+  h.textContent=['💗','💖','💕','🌸','✨'][Math.floor(Math.random()*5)];
+  h.style.left=Math.random()*100+'%';
+  h.style.fontSize=(16+Math.random()*28)+'px';
+  h.style.animationDuration=(5+Math.random()*5)+'s';
+  $('hearts').appendChild(h);setTimeout(function(){h.remove()},10500);
+}
+setInterval(heart,700);
+if(pour!=='toi')$('hello').textContent='Une surprise pour '+pour+'…';
+
+var i=0;
+var tm;
+function type(t){clearTimeout(tm);var m=$('msg');m.textContent='';var k=0;(function s(){if(k<=t.length){m.textContent=t.slice(0,k++);tm=setTimeout(s,35)}})()}
+$('env').onclick=function(){var v=$('env');if(v.className.indexOf('open')>-1)return;v.classList.add('open');startMusic();setTimeout(function(){show(1);type(messages[0])},600)};
+$('next').onclick=function(){
+  i++;
+  if(i<messages.length){type(messages[i]);}
+  else{show('r');}
+};
+// Le bouton "Non" fuit 😄
+var no=$('no'),tries=0,nos=['Non','Sûre ? 🥺','Réfléchis…','Allez 😘','Dis oui 💗'];
+function flee(e){
+  e.preventDefault();
+  no.style.position='absolute';
+  no.style.left=Math.random()*60+'%';
+  no.style.top=(Math.random()*120-20)+'px';
+  tries++;$('yes').style.transform='scale('+Math.min(1+tries*.1,2)+')';
+  no.textContent=nos[Math.min(tries,nos.length-1)];
+}
+no.addEventListener('mouseover',flee);
+no.addEventListener('touchstart',flee,{passive:false});
+no.addEventListener('click',flee);
+$('yes').onclick=function(){
+  $('end').innerHTML=finale;show(3);
+  for(var k=0;k<40;k++)setTimeout(heart,k*60);
+  for(var b=0;b<30;b++){var el=document.createElement('div');el.className='burst';el.textContent=['💖','🎉','✨','🌸','💕'][b%5];var a=Math.random()*6.28,d=120+Math.random()*180;el.style.setProperty('--x',Math.cos(a)*d+'px');el.style.setProperty('--y',Math.sin(a)*d+'px');document.body.appendChild(el);setTimeout((function(x){return function(){x.remove()}})(el),1500)}
+};
+var ac,mt=null,st=0;
+var CH=[[261.63,329.63,392,523.25],[220,261.63,329.63,440],[174.61,220,261.63,349.23],[196,246.94,293.66,392]];
+var PT=[0,1,2,3,2,1,2,3];
+function bell(f,v,d){
+  var t=ac.currentTime,o=ac.createOscillator(),o2=ac.createOscillator(),g=ac.createGain(),g2=ac.createGain();
+  o.frequency.value=f;o2.frequency.value=f*2;g2.gain.value=.3;
+  o.connect(g);o2.connect(g2);g2.connect(g);g.connect(ac.destination);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.start(t);o2.start(t);o.stop(t+d);o2.stop(t+d);
+}
+function tick(){
+  var c=CH[Math.floor(st/8)%4],p=PT[st%8];
+  bell(c[p],.1,1.3);
+  if(st%8===0)bell(c[0]/2,.14,2);
+  if(st%4===2)bell(c[3]*2,.04,1.5);
+  st++;
+}
+var yt=null,playing=false;
+function ytCmd(f){try{yt.contentWindow.postMessage(JSON.stringify({event:'command',func:f,args:[]}),'*')}catch(e){}}
+function startMusic(){
+  if(!yt){yt=document.createElement('iframe');yt.id='ytp';yt.title='Ailleurs';
+    yt.src='https://www.youtube.com/embed/XkY9kuSgbVM?autoplay=1&enablejsapi=1&playsinline=1&rel=0&loop=1&playlist=XkY9kuSgbVM';
+    yt.allow='autoplay; encrypted-media; picture-in-picture';document.body.appendChild(yt);}
+  else ytCmd('playVideo');
+  $('lyr').style.display='block';playing=true;$('mus').textContent='🎵';
+}
+function stopMusic(){ytCmd('pauseVideo');playing=false;$('mus').textContent='🔇';}
+$('mus').onclick=function(){playing?stopMusic():startMusic()};
+$('lyr').onclick=function(){$('ly').classList.add('on')};
+$('lyx').onclick=function(){$('ly').classList.remove('on')};
+document.addEventListener('pointermove',function(ev){
+  if(Math.random()<.5)return;
+  var s=document.createElement('div');s.className='sp';s.textContent='✨';
+  s.style.left=ev.clientX+'px';s.style.top=ev.clientY+'px';
+  document.body.appendChild(s);setTimeout(function(){s.remove()},800);
+});
+var raisons=['Ton sourire 😊','Ta façon de me faire rire','Tout simplement… toi 💗'];
+var seen=0;
+raisons.forEach(function(t){
+  var c=document.createElement('div');c.className='rc';c.textContent='💌 Touche-moi';
+  c.onclick=function(){if(c.dataset.d)return;c.dataset.d=1;c.classList.add('flip');c.textContent=t;seen++;heart();
+    if(seen===raisons.length)$('go').style.display='inline-block'};
+  $('rs').appendChild(c);
+});
+$('go').onclick=function(){$('q').textContent=question;show(2)};
+</script>
+</body>
+</html>

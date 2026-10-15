@@ -1,0 +1,10 @@
+COMMENT METTRE LE SITE EN LIGNE (gratuit)
+
+IMPORTANT : ne pas ouvrir index.html directement depuis le telephone ou l'ordinateur,
+YouTube refuse de lire la video hors d'un vrai site. Il faut l'heberger :
+
+1. Va sur https://app.netlify.com/drop
+2. Glisse le dossier (dezippe) contenant index.html
+3. Netlify te donne un lien. Ajoute a la fin : ?pour=Prenom&de=TonPrenom
+   Exemple : https://ton-site.netlify.app/?pour=Aicha&de=Kodjo
+4. Envoie ce lien a la fille. Le son demarre quand elle touche l'enveloppe.
